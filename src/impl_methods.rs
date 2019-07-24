@@ -186,12 +186,10 @@ where
         S: Data,
     {
         if let Some(slc) = self.as_slice_memory_order() {
-            unsafe {
-                Array::from_shape_vec_unchecked(
-                    self.dim.clone().strides(self.strides.clone()),
-                    slc.to_vec(),
-                )
-            }
+            Array::from_shape_vec_unchecked(
+                self.dim.clone().strides(self.strides.clone()),
+                slc.to_vec(),
+            )
         } else {
             self.map(|x| x.clone())
         }
@@ -781,7 +779,7 @@ where
         if subs.is_empty() {
             let mut dim = self.raw_dim();
             dim.set_axis(axis, 0);
-            unsafe { Array::from_shape_vec_unchecked(dim, vec![]) }
+            Array::from_shape_vec_unchecked(dim, vec![])
         } else {
             stack(axis, &subs).unwrap()
         }
@@ -1248,12 +1246,9 @@ where
             let v: Vec<A> = self.iter().cloned().collect();
             let dim = self.dim.clone();
             assert_eq!(v.len(), dim.size());
-            let owned_array: Array<A, D> = unsafe {
-                // Safe because the shape and element type are from the existing array
-                // and the strides are the default strides.
-                Array::from_shape_vec_unchecked(dim, v)
-            };
-            CowArray::from(owned_array)
+            // Safe because the shape and element type are from the existing array
+            // and the strides are the default strides.
+            CowArray::from(Array::from_shape_vec_unchecked(dim, v))
         }
     }
 
@@ -1448,7 +1443,7 @@ where
             }
         } else {
             let v = self.iter().cloned().collect::<Vec<A>>();
-            unsafe { ArrayBase::from_shape_vec_unchecked(shape, v) }
+            ArrayBase::from_shape_vec_unchecked(shape, v)
         }
     }
 
@@ -1987,15 +1982,13 @@ where
     {
         if let Some(slc) = self.as_slice_memory_order() {
             let v = crate::iterators::to_vec_mapped(slc.iter(), f);
-            unsafe {
-                ArrayBase::from_shape_vec_unchecked(
-                    self.dim.clone().strides(self.strides.clone()),
-                    v,
-                )
-            }
+            ArrayBase::from_shape_vec_unchecked(
+                self.dim.clone().strides(self.strides.clone()),
+                v,
+            )
         } else {
             let v = crate::iterators::to_vec_mapped(self.iter(), f);
-            unsafe { ArrayBase::from_shape_vec_unchecked(self.dim.clone(), v) }
+            ArrayBase::from_shape_vec_unchecked(self.dim.clone(), v)
         }
     }
 
@@ -2016,10 +2009,10 @@ where
             let strides = self.strides.clone();
             let slc = self.as_slice_memory_order_mut().unwrap();
             let v = crate::iterators::to_vec_mapped(slc.iter_mut(), f);
-            unsafe { ArrayBase::from_shape_vec_unchecked(dim.strides(strides), v) }
+            ArrayBase::from_shape_vec_unchecked(dim.strides(strides), v)
         } else {
             let v = crate::iterators::to_vec_mapped(self.iter_mut(), f);
-            unsafe { ArrayBase::from_shape_vec_unchecked(dim, v) }
+            ArrayBase::from_shape_vec_unchecked(dim, v)
         }
     }
 

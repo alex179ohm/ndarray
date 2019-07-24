@@ -1982,10 +1982,7 @@ where
     {
         if let Some(slc) = self.as_slice_memory_order() {
             let v = crate::iterators::to_vec_mapped(slc.iter(), f);
-            ArrayBase::from_shape_vec_unchecked(
-                self.dim.clone().strides(self.strides.clone()),
-                v,
-            )
+            ArrayBase::from_shape_vec_unchecked(self.dim.clone().strides(self.strides.clone()), v)
         } else {
             let v = crate::iterators::to_vec_mapped(self.iter(), f);
             ArrayBase::from_shape_vec_unchecked(self.dim.clone(), v)

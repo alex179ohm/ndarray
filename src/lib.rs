@@ -7,6 +7,12 @@
 // except according to those terms.
 #![crate_name = "ndarray"]
 #![doc(html_root_url = "https://docs.rs/ndarray/0.12/")]
+#![allow(
+    clippy::many_single_char_names,
+    clippy::deref_addrof,
+    clippy::unreadable_literal,
+    clippy::many_single_char_names
+)]
 
 //! The `ndarray` crate provides an *n*-dimensional container for general elements
 //! and for numerics.
@@ -988,7 +994,7 @@ pub type Ixs = isize;
 /// `Array<A, D>` | `Vec<A>` | [`.into_raw_vec()`](type.Array.html#method.into_raw_vec)<sup>[1](#into_raw_vec)</sup>
 /// `&ArrayBase<S, D>` | `&[A]` | [`.as_slice()`](#method.as_slice)<sup>[2](#req_contig_std)</sup>, [`.as_slice_memory_order()`](#method.as_slice_memory_order)<sup>[3](#req_contig)</sup>
 /// `&mut ArrayBase<S: DataMut, D>` | `&mut [A]` | [`.as_slice_mut()`](#method.as_slice_mut)<sup>[2](#req_contig_std)</sup>, [`.as_slice_memory_order_mut()`](#method.as_slice_memory_order_mut)<sup>[3](#req_contig)</sup>
-/// `ArrayView<A, D>` | `&[A]` | [`.into_slice()`](type.ArrayView.html#method.into_slice)<sup>[2](#req_contig_std)</sup>
+/// `ArrayView<A, D>` | `&[A]` | [`.to_slice()`](type.ArrayView.html#method.to_slice)<sup>[2](#req_contig_std)</sup>
 /// `ArrayViewMut<A, D>` | `&mut [A]` | [`.into_slice()`](type.ArrayViewMut.html#method.into_slice)<sup>[2](#req_contig_std)</sup>
 /// `Array0<A>` | `A` | [`.into_scalar()`](type.Array.html#method.into_scalar)
 ///
@@ -1552,8 +1558,8 @@ where
     {
         if let Some(slc) = self.as_slice_memory_order_mut() {
             // FIXME: Use for loop when slice iterator is perf is restored
-            for i in 0..slc.len() {
-                f(&mut slc[i]);
+            for x in slc.iter_mut() {
+                f(x);
             }
             return;
         }
